@@ -1,0 +1,51 @@
+ #include <VGAX.h>
+VGAX vga;
+int temp=0;
+void setup() 
+{
+   //Serial.begin(250000);
+   vga.begin();
+   vga.clear(0);
+   
+}
+ 
+void loop() {
+  if(temp!=analogRead(A2)/10){
+  temp=analogRead(A2)/10;
+  vga.clear(0);
+  //vga.putpixel(temp, VGAX_HEIGHT-7, 3);
+  vga.putpixel(temp, VGAX_HEIGHT-6, 1);
+  vga.putpixel(temp, VGAX_HEIGHT-5, 3);
+  vga.putpixel(temp, VGAX_HEIGHT-4, 3);
+  vga.putpixel(temp, VGAX_HEIGHT-3, 3);
+  vga.putpixel(temp, VGAX_HEIGHT-2, 3);
+  //
+  vga.putpixel(temp-1, VGAX_HEIGHT-7, 1);
+  vga.putpixel(temp-1, VGAX_HEIGHT-6, 1);
+  vga.putpixel(temp-1, VGAX_HEIGHT-5, 3);
+  vga.putpixel(temp-1, VGAX_HEIGHT-4, 3);
+  vga.putpixel(temp-1, VGAX_HEIGHT-3, 3);
+  vga.putpixel(temp-1, VGAX_HEIGHT-2, 3);
+  //
+  vga.putpixel(temp+1, VGAX_HEIGHT-7, 1);
+  vga.putpixel(temp+1, VGAX_HEIGHT-6, 1);
+  vga.putpixel(temp+1, VGAX_HEIGHT-5, 3);
+  vga.putpixel(temp+1, VGAX_HEIGHT-4, 3);
+  vga.putpixel(temp+1, VGAX_HEIGHT-3, 3);
+  vga.putpixel(temp+1, VGAX_HEIGHT-2, 3);
+  //
+  vga.putpixel(temp+2, VGAX_HEIGHT-3, 3);
+  vga.putpixel(temp+2, VGAX_HEIGHT-2, 3);
+  vga.putpixel(temp+2, VGAX_HEIGHT-1, 3);
+  vga.putpixel(temp+3, VGAX_HEIGHT-3, 3);
+  vga.putpixel(temp+3, VGAX_HEIGHT-2, 3);
+  vga.putpixel(temp+3, VGAX_HEIGHT-1, 3);
+  vga.putpixel(temp-3, VGAX_HEIGHT-3, 3);
+  vga.putpixel(temp-3, VGAX_HEIGHT-2, 3);
+  vga.putpixel(temp-3, VGAX_HEIGHT-1, 3);
+  vga.putpixel(temp-2, VGAX_HEIGHT-3, 3);
+  vga.putpixel(temp-2, VGAX_HEIGHT-2, 3);
+  vga.putpixel(temp-2, VGAX_HEIGHT-1, 3);
+  }
+}
+
