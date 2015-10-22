@@ -2,31 +2,37 @@
 
 class Obstacle {
   private:
-  int realPosY;
+  byte counter;
   public:
-  int posX;
-  int posY = 3;
+  byte posX;
+  byte posY;
+  bool enabled;
 
-
-  
-  Obstacle(int x){
-    posX = x;
-  }
-
-  void ClearBehind(){
+  void ClearBehind()
+  {
     VGAX::fillrect(posX-2, posY-2, 5, 2, 0);
   }
 
-  void Draw(){
+  void Draw()
+  {  
+    counter = (counter+1)%10;
     
-    realPosY++;
-    if (realPosY/10 != posY){
+    if (!counter)
+    {
       ClearBehind();
-      posY = realPosY/10;
+      ++posY;
       
       VGAX::fillrect(posX-2, posY-1, 5, 3, 1);
       VGAX::fillrect(posX-1, posY-2, 3, 5, 1);
     }
+  }
+
+  void Activate()
+  {
+    enabled = true;
+    posY = 3;
+    posX = random(10, 110);
+    counter = 0;
   }
 };
 
