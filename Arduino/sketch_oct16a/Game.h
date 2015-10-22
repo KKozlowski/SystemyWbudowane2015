@@ -3,28 +3,51 @@
 #include "Margins.h"
 #include "Obstacle.h"
 
+#define obstCount 6
+
 int a=0;
 class Game
 {
+  private:
+  byte spawnTimer;
+  byte lastIndex;
+  
   public:
   Rocket rocket;
   Margins margins;
-  Obstacle *obs[10];
-  int maxY;
+  Obstacle obs[obstCount];
   
-  void Begin(){
-  VGAX::begin();
-  VGAX::clear(0);
-  obs[0] = new Obstacle(50);
+  void Begin()
+  {
+    VGAX::begin();
+    VGAX::clear(0);
   }
   
-  void Draw (){
-  rocket.Draw();
-  margins.Draw();
-  obs[0]->Draw();
-  //25 - g
-  //28 - e
-  //
-  //VGAX::tone(50);
+  void Draw ()
+  {
+    rocket.Draw();
+    margins.Draw();
+    for (int i = 0; i < obstCount; ++i)
+    {
+      if(obs[i].enabled)
+      {
+        obs[i].Draw();
+        if (obs[i].posY >= 50)
+        {
+          //checkCollision
+          obs[i].enabled = false;
+        }
+      }
+    }
+
+    ++spawnTimer;
+    if(!spawnTimer)
+      SpawnObstacle();
+  }
+
+  void SpawnObstacle()
+  {
+    lastIndex = (lastIndex+1)%obstCount;
+    obs[lastIndex].Activate();
   }
 };
