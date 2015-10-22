@@ -36,7 +36,7 @@ public:
   static inline unsigned millis() { return vtimer*16; }
   static inline unsigned long micros() { return vtimer*16000; }
 
-  static inline void tone(unsigned int frequency);
+  static void tone(unsigned int frequency);
   static void noTone();
 };
 #endif

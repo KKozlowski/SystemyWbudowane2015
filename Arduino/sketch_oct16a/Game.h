@@ -10,6 +10,7 @@ class Game
   Rocket rocket;
   Margins margins;
   Obstacle *obs[10];
+  int maxY;
   
   void Begin(){
   VGAX::begin();
@@ -21,5 +22,9 @@ class Game
   rocket.Draw();
   margins.Draw();
   obs[0]->Draw();
+  //25 - g
+  //28 - e
+  //
+  //VGAX::tone(50);
   }
 };
