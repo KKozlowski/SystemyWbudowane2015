@@ -2,20 +2,13 @@
 
 //HSYNC pin used by TIMER2
 #define HSYNCPIN 3
-
 //These two pin cannot be modified without modify the HSYNC assembler code
 #define COLORPIN0 6
 #define COLORPIN1 7
-
 //VSYNC pin used by TIMER1. Can be 9 or 10
 #define VSYNCPIN 9
-
 //Number of VGA lines to be skipped (black lines)
-/*These lines includes the vertical sync pulse and back porch.
-Minimum value must be 35 (calculate from Nick Gammon)
-You can modify this value to center the framebuffer vertically, or not*/
 #define SKIPLINES 90
-
 //number of visible lines, after SKIPLINES
 #define RENDERLCOUNT 359
 
@@ -25,14 +18,12 @@ static byte aline, rlinecnt;
 static byte vskip;
 byte vgaxfb[VGAX_HEIGHT*VGAX_BWIDTH];
 
-//VSYNC interrupt
 ISR(TIMER1_OVF_vect) {
   aline=-1;
   vskip=SKIPLINES;
   vtimer++;
   rlinecnt=0;
 }
-//HSYNC interrupt
 ISR(TIMER2_OVF_vect) {
   /*
   NOTE: I prefer to generate the line here, inside the interrupt.
@@ -46,17 +37,17 @@ ISR(TIMER2_OVF_vect) {
     "      ld r16, Z                        \n\t" //c1 r16=afreq
     "      cpi %[freq0], 0                  \n\t" //c1 afreq0==0 ?
     "      breq no_audio                    \n\t" //c1/2 *0
-    "play_audio:                            \n\t" 
+    "play_audio:                            \n\t"
     "      cpi r16, 0                       \n\t" //c1 afreq==0 ?
     "      brne dont_flip_audio_pin         \n\t" //c1/2 *1
-    "flip_audio_pin:                        \n\t" 
+    "flip_audio_pin:                        \n\t"
     "      ldi r18, 1                       \n\t" //c1
     "      out %[audiopin], r18             \n\t" //c1
     "      st Z, %[freq0]                   \n\t" //c1 afreq=afreq0
     "      rjmp end                         \n\t" //c2
     //"    mov r16, %[freq0]\n\r"
     //"    dec r16\n\r"
-    "no_audio:                              \n\t" 
+    "no_audio:                              \n\t"
     "      nop                              \n\t" //c1
     "      nop                              \n\t" //c1
     "      nop                              \n\t" //c1
@@ -65,7 +56,7 @@ ISR(TIMER2_OVF_vect) {
     "      nop                              \n\t" //c1
     "      nop                              \n\t" //c1
     "      rjmp end                         \n\t" //c2
-    "dont_flip_audio_pin:                   \n\t" 
+    "dont_flip_audio_pin:                   \n\t"
     "      dec r16                          \n\t" //c1
     "      st Z, r16                        \n\t" //c1
     //"    nop                              \n\t" //c1
@@ -81,7 +72,7 @@ ISR(TIMER2_OVF_vect) {
       vskip--;
       return;
   }
-  if (rlinecnt<60) {   
+  if (rlinecnt<60) {
     //interrupt jitter fix (needed to keep signal stable)
     //code from https://github.com/cnlohr/avrcraft/tree/master/terminal
     //modified from 4 nop align to 8 nop align
@@ -122,13 +113,13 @@ ISR(TIMER2_OVF_vect) {
     PORTD.
 
     Pixels are packed as 0b11223344 because the first pixel write have no time
-    to perform a shift (ld, out) and must be prealigned to the two upper bits 
-    of PORTD, where the two wires of the VGA DSUB are connected. The second, 
-    the third and the forth pixels are shifted left using mul opcode instead 
+    to perform a shift (ld, out) and must be prealigned to the two upper bits
+    of PORTD, where the two wires of the VGA DSUB are connected. The second,
+    the third and the forth pixels are shifted left using mul opcode instead
     of a left shift opcode. Shift opcodes are slow and can shift only 1 bit at
     a time, using 1 clock cycle. mul is faster.
 
-    Instead of using a loop i use the .rept assembler directive to generate an 
+    Instead of using a loop i use the .rept assembler directive to generate an
     unrolled loop of 30 iterations.
     */
     asm volatile (
@@ -157,7 +148,7 @@ ISR(TIMER2_OVF_vect) {
     : "r16", "r17", "r20", "r21", "memory");
 
     //increment framebuffer line counter after 6 VGA lines
-    if (++aline==5) { 
+    if (++aline==5) {
       aline=-1;
       rlinecnt++;
     } else {
@@ -170,15 +161,15 @@ ISR(TIMER2_OVF_vect) {
       :::);
       #endif
     }
-  } 
+  }
 }
 void VGAX::begin(bool enableTone) {
   //Timers setup code, modified version of the Nick Gammon's VGA sketch
   cli();
   //setup audio pin
-  if (enableTone) {
+  if (enableTone)
     pinMode(A0, OUTPUT);
-  }
+
   //disable TIMER0 interrupt
   TIMSK0=0;
   TCCR0A=0;
@@ -213,7 +204,7 @@ void VGAX::begin(bool enableTone) {
   TIMSK2=bit(TOIE2); //interrupt on overflow on TIMER2
   //pins for outputting the colour information
   pinMode(COLORPIN0, OUTPUT);
-  pinMode(COLORPIN1, OUTPUT);  
+  pinMode(COLORPIN1, OUTPUT);
   sei();
 }
 void VGAX::end() {
@@ -237,11 +228,10 @@ void VGAX::clear(byte color) {
   while (cnt--)
     *o++=c0;
 }
-void VGAX::copy(byte *src) {
-  byte *o=(byte*)vgaxfb;
-  unsigned cnt=VGAX_BSIZE;
-  while (cnt--)
-    *o++=pgm_read_byte(src++);
+void VGAX::putpixel(byte x, byte y, byte color){
+    byte *p=vgaxfb + y*VGAX_BWIDTH + (x>>2);
+    byte bitpos=6-(x & 3)*2;
+    *p=(*p & ~(3 <<bitpos)) | color <<bitpos;
 }
 void VGAX::fillrect(byte x, byte y, byte width, byte height, byte color) {
   byte rh=height;
@@ -256,13 +246,10 @@ void VGAX::fillrect(byte x, byte y, byte width, byte height, byte color) {
   }
 }
 void VGAX::tone(unsigned int frequency) {
-  //HSYNC=32usec
   afreq=1000000 / frequency / 2 / 32;
   afreq0=afreq;
 }
-void VGAX::noTone() {
-  afreq0=0;
-}
+void VGAX::noTone() { afreq0=0; }
 void VGAX::delay(int msec) {
   while (msec--) {
     unsigned cnt=16000/32; //TODO: use a more precise way to calculate cnt
