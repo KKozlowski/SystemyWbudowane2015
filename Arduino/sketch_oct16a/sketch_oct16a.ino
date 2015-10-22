@@ -1,8 +1,9 @@
 #include "VGAX.h"
 #include "Game.h"
-
+#include "Audio.h"
 
 Game game;
+Audio au;
 
 void setup() {
   game.Begin();
@@ -17,8 +18,8 @@ void loop()
 {
   //VGAX::tone(726);
   game.Draw();
-
-  static unsigned cnt;
+  au.Update();
+  /*static unsigned cnt;
   if (!(cnt % 10))
     VGAX::noTone();
   if (!(cnt++%20))
@@ -26,6 +27,6 @@ void loop()
   if (cnt>=120 + loopMaxOffset%120){
     cnt=0;
     loopMaxOffset +=10;
-  }
+  }*/
 }
 
