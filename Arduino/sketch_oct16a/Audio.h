@@ -14,14 +14,17 @@ class Audio
   }
   
   void Update()
-  {
-    int beats[] = {160, 160, 160,  80,  80,  160, 320, 160, 160, 160, 80, 80, 320, 320, 640, 120, 800}; 
+  { 
+    //int furElise[] = {329,311,329,311,329,246,293,261,220, 146,174,220,247,174,233,247,261,329,311,329,311,329,247,293,261,220,0};
+    byte beats[] = {16, 16, 16,  8,  8,  16, 32, 16, 16, 16, 8, 8, 32, 32, 64, 12, 80}; 
+  
+    
     ++counter %= delay;
     
     if (!counter)
     {
-      VGAX::tone(beats[index]);
-      ++index %= sizeof(beats)/2;
+      VGAX::tone(beats[index]*10);
+      ++index %= sizeof(beats);
     } 
   }
 };
