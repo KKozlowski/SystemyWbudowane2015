@@ -1,6 +1,5 @@
-#include <VGAX.h>
+#include "VGAX.h"
 #include "Game.h"
-
 
 
 Game game;
