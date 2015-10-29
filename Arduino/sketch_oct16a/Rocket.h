@@ -3,12 +3,13 @@ class Rocket
 {
   private:
   int temp=0;
-  int position;
-  short positionY = 52;
+  
+  
   bool alive = true;
 
   public:
-  
+  short positionY = 52;
+  int position;
   void Clear()//żeby nie VGAX::clear(0) bo czyści cały ekran i kurwa mruga, maluje tam gdzie była rakieta czarny po czym maluje rakiete
   {
     VGAX::fillrect(temp-1, 52, 3, 6, 0);

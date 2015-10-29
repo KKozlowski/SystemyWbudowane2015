@@ -2,8 +2,10 @@
 #include "Rocket.h"
 #include "Margins.h"
 #include "Obstacle.h"
+#include "Bullet.h"
 
 #define obstCount 6
+#define bullCount 3
 
 int a=0;
 class Game
@@ -16,6 +18,7 @@ class Game
   Rocket rocket;
   Margins margins;
   Obstacle obs[obstCount];
+  Bullet bull[bullCount];
   
   void Begin()
   {
@@ -56,21 +59,63 @@ class Game
         }
       }
 
+    //Sprawdzanie przycisku
     if (currentButtonValue() == true && previousButtonValue == false){
       previousButtonValue = true;
       OnButtonPressed();
     } else 
       previousButtonValue=currentButtonValue();
+
+    //Rysowanie pocisków
+    for (int i=0; i<bullCount; ++i){
+      if (bull[i].enabled){
+        bull[i].Draw();
+        if (bull[i].posY < -3)
+          bull[i].enabled = false;
+      }
+    }
+
+    //Kolizje pocisków
+    for (int i=0; i<bullCount; ++i){
+      if (bull[i].enabled){
+        for (int k=0; k<obstCount; ++k){
+          if(obs[k].enabled){
+            if(obs[k].posX - bull[i].posX <= 2 && obs[k].posX - bull[i].posX>=-2
+                &&  obs[k].posY - bull[i].posY <= 2 && obs[k].posY - bull[i].posY >= -2){
+              obs[k].Destroy();
+              bull[i].Destroy();
+              break;
+            }
+          }
+        }
+      }
+    }
   }
 
   void SpawnObstacle()
   {
     lastIndex = (lastIndex+1)%obstCount;
-    obs[lastIndex].Activate();
+    for (int i=0; i<obstCount; ++i){
+      if (!obs[i].enabled){
+        obs[i].Activate();
+        break;
+      }
+    }
+    //obs[lastIndex].Activate();
   }
 
   void OnButtonPressed(){
     VGAX::tone(700);
+    if(rocket.IsAlive()){
+      int posX = rocket.position;
+      int posY = rocket.positionY-3;
+      for (int i=0; i<bullCount; ++i){
+        if (!bull[i].enabled){
+          bull[i].Spawn(posX, posY);
+          break;
+        }
+      }
+    }
   }
   
   bool currentButtonValue(){

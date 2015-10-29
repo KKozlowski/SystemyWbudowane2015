@@ -34,7 +34,7 @@ class Obstacle {
   void Activate()
   {
     enabled = true;
-    posY = 3;
+    posY = 0;
     posX = random(10, 110);
     counter = 0;
   }
