@@ -13,6 +13,10 @@ class Obstacle {
     VGAX::fillrect(posX-2, posY-2, 5, 2, 0);
   }
 
+  void ClearAll(){
+    VGAX::fillrect(posX-2, posY-2, 5, 5, 0);
+  }
+
   void Draw()
   {  
     counter = (counter+1)%10;
@@ -33,6 +37,11 @@ class Obstacle {
     posY = 3;
     posX = random(10, 110);
     counter = 0;
+  }
+  void Destroy(){
+    ClearAll();
+    enabled= false;
+    posY=64;
   }
 };
 

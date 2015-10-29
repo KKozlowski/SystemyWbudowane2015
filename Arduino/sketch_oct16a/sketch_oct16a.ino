@@ -1,3 +1,4 @@
+#include <EEPROM.h>
 #include "VGAX.h"
 #include "Game.h"
 #include "Audio.h"
@@ -7,6 +8,7 @@ Audio au;
 
 void setup() {
   game.Begin();
+  pinMode(13, INPUT);
    }
 
 //768 - F#

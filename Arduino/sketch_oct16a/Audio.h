@@ -1,3 +1,4 @@
+#include <EEPROM.h>
 #include "VGAX.h"
 
 #define delay 50;
@@ -8,6 +9,7 @@ class Audio
   //int beats[12]; 
   byte counter = 0;
   byte index = 0;
+  byte beats[17] = {16, 16, 16,  8,  8,  16, 32, 16, 16, 16, 8, 8, 32, 32, 64, 12, 80}; 
 
   public:
   Audio(){
@@ -27,5 +29,14 @@ class Audio
       ++index %= sizeof(beats);
     } 
   }
+   /* void Update()
+  { 
+    
+    if (!counter)
+    {
+      VGAX::tone(EEPROM[index]*10);
+      ++index %= 17;
+    }
+  }*/
 };
 

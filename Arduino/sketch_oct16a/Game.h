@@ -27,6 +27,8 @@ class Game
   {
     rocket.Draw();
     margins.Draw();
+
+    //Rysowanie przeszkód
     for (int i = 0; i < obstCount; ++i)
     {
       if(obs[i].enabled)
@@ -40,10 +42,12 @@ class Game
       }
     }
 
+    //Spawnowanie przeszkód
     ++spawnTimer;
     if(!spawnTimer)
       SpawnObstacle();
 
+    //Kolizje przeszkód z graczem.
     for (int i = 0; i < obstCount; ++i)
     {
       if(obs[i].posY > 52 && obs[i].posY <56){
@@ -51,9 +55,12 @@ class Game
           rocket.Die();
         }
       }
-    
-    
-    //rocket.Die();
+
+    if (currentButtonValue() == true && previousButtonValue == false){
+      previousButtonValue = true;
+      OnButtonPressed();
+    } else 
+      previousButtonValue=currentButtonValue();
   }
 
   void SpawnObstacle()
@@ -61,4 +68,14 @@ class Game
     lastIndex = (lastIndex+1)%obstCount;
     obs[lastIndex].Activate();
   }
+
+  void OnButtonPressed(){
+    VGAX::tone(700);
+  }
+  
+  bool currentButtonValue(){
+    return digitalRead(13) == 1;
+  }
+
+  bool previousButtonValue = false;
 };
