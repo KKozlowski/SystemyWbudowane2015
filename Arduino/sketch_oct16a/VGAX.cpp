@@ -1,3 +1,6 @@
+//linie pikseli - linie na ekranie LCD
+//linie punktow - linie w tablicy pikseli w Arduino
+
 #include "VGAX.h"
 
 //HSYNC pin used by TIMER2
@@ -12,19 +15,24 @@
 //number of visible lines, after SKIPLINES
 #define RENDERLCOUNT 359
 
-static byte afreq, afreq0;
-unsigned vtimer;
-static byte aline, rlinecnt;
-static byte vskip;
-byte vgaxfb[VGAX_HEIGHT*VGAX_BWIDTH];
+#define POINTTOPIXELHEIGHT 6
+#define POINTTOPIXELHEIGHTMINUSONE 5
 
-ISR(TIMER1_OVF_vect) {
+static byte afreq, //przechowuje częstotliwość aktualnego tonu
+            afreq0;//służy do sprawdzania, czy ton jest zerowy
+unsigned vtimer;
+static byte aline,    //liczy linie pikseli przeznaczone na wyświetlenie jednej linii punktów. Gdy osiągnie 6, rlinecnt jest inkrementowany.
+            rlinecnt; //iterator linii punktów. Osiąga wartości od 0 do 60.
+static byte vskip; //liczba pomijanych linii pikseli na początku
+byte vgaxfb[VGAX_HEIGHT*VGAX_BWIDTH]; //tablica pikseli
+
+ISR(TIMER1_OVF_vect) { //Przejęcie funkcji zegara 1
   aline=-1;
   vskip=SKIPLINES;
   vtimer++;
   rlinecnt=0;
 }
-ISR(TIMER2_OVF_vect) {
+ISR(TIMER2_OVF_vect) { //Przejęcie funkcji zegara 2
   /*
   NOTE: I prefer to generate the line here, inside the interrupt.
   Gammon's code generate the line pixels inside main().
@@ -68,7 +76,7 @@ ISR(TIMER2_OVF_vect) {
   : "r16", "r18");
 
   //check vertical porch
-  if (vskip) {
+  if (vskip) {  //najpierw pomija 90 linii
       vskip--;
       return;
   }
@@ -147,8 +155,7 @@ ISR(TIMER2_OVF_vect) {
       "z" "I" (/*rline*/(byte*)vgaxfb + rlinecnt*VGAX_BWIDTH)
     : "r16", "r17", "r20", "r21", "memory");
 
-    //increment framebuffer line counter after 6 VGA lines
-    if (++aline==5) {
+    if (++aline==POINTTOPIXELHEIGHTMINUSONE) { //po zużyciu 6 linii pikseli program przechodzi do następnej linii punktów - bufor linii (rlinecnt) jest inkrementowany, zas aline jest resetowany.
       aline=-1;
       rlinecnt++;
     } else {
@@ -163,9 +170,10 @@ ISR(TIMER2_OVF_vect) {
     }
   }
 }
+
 void VGAX::begin(bool enableTone) {
   //Timers setup code, modified version of the Nick Gammon's VGA sketch
-  cli();
+  cli(); //CLI wyłącza przerwania
   //setup audio pin
   if (enableTone)
     pinMode(A0, OUTPUT);
@@ -205,8 +213,9 @@ void VGAX::begin(bool enableTone) {
   //pins for outputting the colour information
   pinMode(COLORPIN0, OUTPUT);
   pinMode(COLORPIN1, OUTPUT);
-  sei();
+  sei(); //SEI włącza przerwania
 }
+
 void VGAX::end() {
   //disable TIMER0
   TCCR0A=0;
@@ -218,7 +227,8 @@ void VGAX::end() {
   TCCR2A=0;
   TCCR2B=0;
 }
-void VGAX::clear(byte color) {
+
+void VGAX::clear(byte color) { //pokrywa cały ekran podanym kolorem
   register byte c=color;
   c&=3;
   register byte c0=(c*4) | c;
@@ -226,13 +236,15 @@ void VGAX::clear(byte color) {
   unsigned cnt=VGAX_BSIZE;
   byte *o=(byte*)vgaxfb;
   while (cnt--)
-    *o++=c0;
+    *o++=c0; //iteracja po pozycjach w tablicy pikseli
 }
+
 void VGAX::putpixel(byte x, byte y, byte color){
-    byte *p=vgaxfb + y*VGAX_BWIDTH + (x>>2);
+    byte *p=vgaxfb + y*VGAX_BWIDTH + (x>>2); //referencja do informacji o pikselu o podanej pozycji
     byte bitpos=6-(x & 3)*2;
-    *p=(*p & ~(3 <<bitpos)) | color <<bitpos;
+    *p=(*p & ~(3 <<bitpos)) | color <<bitpos; //przypisanie nowego info o pikselu.
 }
+
 void VGAX::fillrect(byte x, byte y, byte width, byte height, byte color) {
   byte rh=height;
   while (rh--) {
@@ -245,11 +257,16 @@ void VGAX::fillrect(byte x, byte y, byte width, byte height, byte color) {
     y++;
   }
 }
+
 void VGAX::tone(unsigned int frequency) {
   afreq=1000000 / frequency / 2 / 32;
   afreq0=afreq;
 }
-void VGAX::noTone() { afreq0=0; }
+
+void VGAX::noTone() { 
+  afreq0=0; 
+}
+
 void VGAX::delay(int msec) {
   while (msec--) {
     unsigned cnt=16000/32; //TODO: use a more precise way to calculate cnt
