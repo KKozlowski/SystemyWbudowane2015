@@ -9,6 +9,7 @@ Audio au;
 void setup() {
   game.Begin();
   pinMode(13, INPUT);
+  
    }
 
 //768 - F#
@@ -21,6 +22,9 @@ void loop()
   //VGAX::tone(726);
   game.Draw();
   au.Update();
+  //VGAX::clear(1);
+  //delay(100000);
+  //digitalWrite(11, LOW);
   /*static unsigned cnt;
   if (!(cnt % 10))
     VGAX::noTone();

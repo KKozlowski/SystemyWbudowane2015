@@ -3,6 +3,7 @@
 
 #define delay 50;
 #define size 17;
+#define eliseSize 47;
 class Audio
 {
   private:

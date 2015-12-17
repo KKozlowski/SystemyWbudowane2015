@@ -28,68 +28,72 @@ class Game
   
   void Draw ()
   {
-    rocket.Draw();
-    margins.Draw();
-
-    //Rysowanie przeszkód
-    for (int i = 0; i < obstCount; ++i)
-    {
-      if(obs[i].enabled)
+    if(rocket.IsAlive()){
+      rocket.Draw();
+      margins.Draw();
+  
+      //Rysowanie przeszkód
+      for (int i = 0; i < obstCount; ++i)
       {
-        obs[i].Draw();
-        if (obs[i].posY >= 64)
+        if(obs[i].enabled)
         {
-          //checkCollision
-          obs[i].enabled = false;
+          obs[i].Draw();
+          if (obs[i].posY >= 64)
+          {
+            //checkCollision
+            obs[i].enabled = false;
+          }
         }
       }
-    }
-
-    //Spawnowanie przeszkód
-    ++spawnTimer;
-    if(!spawnTimer)
-      SpawnObstacle();
-
-    //Kolizje przeszkód z graczem.
-    for (int i = 0; i < obstCount; ++i)
-    {
-      if(obs[i].posY > 52 && obs[i].posY <56){
-        if (rocket.CollidesWith(obs[i].posX))
-          rocket.Die();
+  
+      //Spawnowanie przeszkód
+      ++spawnTimer;
+      if(!spawnTimer)
+        SpawnObstacle();
+  
+      //Kolizje przeszkód z graczem.
+      for (int i = 0; i < obstCount; ++i)
+      {
+        if(obs[i].posY > 52 && obs[i].posY <56){
+          if (rocket.CollidesWith(obs[i].posX))
+            rocket.Die();
+          }
+        }
+  
+      //Rysowanie pocisków
+      for (int i=0; i<bullCount; ++i){
+        if (bull[i].enabled){
+          bull[i].Draw();
+          if (bull[i].posY < -3)
+            bull[i].enabled = false;
         }
       }
-
-    //Sprawdzanie przycisku
-    if (currentButtonValue() == true && previousButtonValue == false){
-      previousButtonValue = true;
-      OnButtonPressed();
-    } else 
-      previousButtonValue=currentButtonValue();
-
-    //Rysowanie pocisków
-    for (int i=0; i<bullCount; ++i){
-      if (bull[i].enabled){
-        bull[i].Draw();
-        if (bull[i].posY < -3)
-          bull[i].enabled = false;
-      }
-    }
-
-    //Kolizje pocisków
-    for (int i=0; i<bullCount; ++i){
-      if (bull[i].enabled){
-        for (int k=0; k<obstCount; ++k){
-          if(obs[k].enabled){
-            if(obs[k].posX - bull[i].posX <= 2 && obs[k].posX - bull[i].posX>=-2
-                &&  obs[k].posY - bull[i].posY <= 2 && obs[k].posY - bull[i].posY >= -2){
-              obs[k].Destroy();
-              bull[i].Destroy();
-              break;
+  
+      //Kolizje pocisków
+      for (int i=0; i<bullCount; ++i){
+        if (bull[i].enabled){
+          for (int k=0; k<obstCount; ++k){
+            if(obs[k].enabled){
+              if(obs[k].posX - bull[i].posX <= 2 && obs[k].posX - bull[i].posX>=-2
+                  &&  obs[k].posY - bull[i].posY <= 2 && obs[k].posY - bull[i].posY >= -2){
+                obs[k].Destroy();
+                bull[i].Destroy();
+                break;
+              }
             }
           }
         }
       }
+    } else {
+      VGAX::clear(1);
     }
+
+    //Sprawdzanie przycisku
+      if (currentButtonValue() == true && previousButtonValue == false){
+        previousButtonValue = true;
+        OnButtonPressed();
+      } else 
+        previousButtonValue=currentButtonValue();
   }
 
   void SpawnObstacle()
@@ -115,6 +119,9 @@ class Game
           break;
         }
       }
+    } else {
+      pinMode(11, OUTPUT);
+      //digitalWrite(11, HIGH);
     }
   }
   
