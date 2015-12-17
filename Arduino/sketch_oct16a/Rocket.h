@@ -34,7 +34,7 @@ class Rocket
   void Draw ()
   {
     if(alive){
-      position = (analogRead(A2)/9.7f)+7;
+      position = (analogRead(A2) * 0.1031f)+7;
       if(temp!=position)
       {
       //VGAX::clear(0);  
