@@ -1,9 +1,9 @@
 #include "VGAX.h"
+
 class Rocket
 {
   private:
   int temp=0;
-  
   
   bool alive = true;
 

@@ -22,6 +22,7 @@ class Game
   
   void Begin()
   {
+    
     VGAX::begin();
     VGAX::clear(0);
   }

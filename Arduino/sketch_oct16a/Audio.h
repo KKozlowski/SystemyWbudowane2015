@@ -11,34 +11,40 @@ class Audio
   byte counter = 0;
   byte index = 0;
   byte beats[17] = {16, 16, 16,  8,  8,  16, 32, 16, 16, 16, 8, 8, 32, 32, 64, 12, 80}; 
-
+  int offset;
+  int leng;
+  int soundLength;
+  int toneHigh = 12;
+  bool stroked = false;
   public:
   Audio(){
+    offset = sizez;
+    leng = eliseSize;
+    soundLength = delay;
   }
   
-  /*void Update()
-  { 
-    //int furElise[] = {329,311,329,311,329,246,293,261,220, 146,174,220,247,174,233,247,261,329,311,329,311,329,247,293,261,220,0};
-    byte beats[] = {16, 16, 16,  8,  8,  16, 32, 16, 16, 16, 8, 8, 32, 32, 64, 12, 80}; 
+  void stroke(){
+    if (stroked) return;
+    else{
+      stroked = true;
+      counter = 0;
+      index = 0;
+      offset = 0;
+      leng = sizez;
+      toneHigh = 10;
+      soundLength = 2*delay;
+    }
+  }
   
-    
-    ++counter %= delay;
-    
-    if (!counter)
-    {
-      VGAX::tone(beats[index]*10);
-      ++index %= sizeof(beats);
-    } 
-  }*/
   void Update()
   {
-      ++counter %= delay;
+      ++counter %= soundLength;
       if (!counter)
       {
-        int ton = EEPROM[index+sizez];
-        ton*=10;
+        int ton = EEPROM[index+offset];
+        ton*=toneHigh;
         VGAX::tone(ton);
-        ++index %= eliseSize;
+        ++index %= leng;
       }
     
   }

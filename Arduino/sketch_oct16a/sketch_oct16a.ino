@@ -22,6 +22,8 @@ void loop()
   //VGAX::tone(726);
   game.Draw();
   au.Update();
+  if(!game.rocket.IsAlive())
+    au.stroke();
   //VGAX::clear(1);
   //delay(100000);
   //digitalWrite(11, LOW);
