@@ -9,8 +9,10 @@ Audio au;
 void setup() {
   game.Begin();
   pinMode(13, INPUT);
-  
-   }
+
+  digitalWrite(11, HIGH);
+  pinMode(11, OUTPUT);
+}
 
 int loopMaxOffset = 10;
 

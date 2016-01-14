@@ -121,12 +121,16 @@ class Game
         }
       }
     } else {
-      pinMode(11, OUTPUT);
+      reset();
     }
   }
   
   bool currentButtonValue(){
     return digitalRead(13) == 1;
+  }
+
+  void reset(){
+    digitalWrite(11, LOW);
   }
 
   bool previousButtonValue = false;

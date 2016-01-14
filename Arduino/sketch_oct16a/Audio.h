@@ -7,7 +7,6 @@
 class Audio
 {
   private:
-  //int beats[12]; 
   byte counter = 0;
   byte index = 0;
   int offset;
