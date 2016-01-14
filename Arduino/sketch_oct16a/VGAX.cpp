@@ -53,13 +53,10 @@ ISR(TIMER2_OVF_vect) { //Przejęcie funkcji zegara 2
     "      out %[audiopin], r18             \n\t" //c1
     "      st Z, %[freq0]                   \n\t" //c1 afreq=afreq0
     "      rjmp end                         \n\t" //c2
-    //"    mov r16, %[freq0]\n\r"
-    //"    dec r16\n\r"
     "no_audio:                              \n\t"
     "      nop                              \n\t" //c1
     "      nop                              \n\t" //c1
     "      nop                              \n\t" //c1
-    //"    nop                              \n\t" //c1
     "      nop                              \n\t" //c1
     "      nop                              \n\t" //c1
     "      nop                              \n\t" //c1
@@ -67,7 +64,7 @@ ISR(TIMER2_OVF_vect) { //Przejęcie funkcji zegara 2
     "dont_flip_audio_pin:                   \n\t"
     "      dec r16                          \n\t" //c1
     "      st Z, r16                        \n\t" //c1
-    //"    nop                              \n\t" //c1
+    "      nop                              \n\t" //c1
     "end:                                   \n\t"
   :
   : "z" (&afreq),
@@ -88,7 +85,6 @@ ISR(TIMER2_OVF_vect) { //Przejęcie funkcji zegara 2
     #define DEJITTER_SYNC -3
     asm volatile(
       "     lds r16, %[timer0]    \n\t" //
-      //"   add r16, %[toffset]   \n\t" //
       "     subi r16, %[tsync]    \n\t" //
       "     andi r16, 7           \n\t" //
       "     call TL               \n\t" //
@@ -97,7 +93,6 @@ ISR(TIMER2_OVF_vect) { //Przejęcie funkcji zegara 2
       "     pop r30               \n\t" //
       "     adiw r30, (LW-TL-5)   \n\t" //
       "     add r30, r16          \n\t" //
-      //"   adc r31, __zero_reg__ \n\t" //
       "     ijmp                  \n\t" //
       "LW:                        \n\t" //
       "     nop                   \n\t" //

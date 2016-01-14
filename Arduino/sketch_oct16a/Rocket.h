@@ -22,9 +22,6 @@ class Rocket
 
   void Die(){
     alive = false;
-    /*while(true){
-       VGAX::fillrect(0, 0, 120, 60, 1);
-    }*/
   }
 
   bool IsAlive(){

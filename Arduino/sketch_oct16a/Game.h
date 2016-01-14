@@ -122,7 +122,6 @@ class Game
       }
     } else {
       pinMode(11, OUTPUT);
-      //digitalWrite(11, HIGH);
     }
   }
   
